@@ -1,5 +1,6 @@
 import { onMounted, onUnmounted } from 'vue';
 import { useGameStore } from '../stores/gameStore';
+import { MAP_CONFIG } from '../constants/map';
 
 declare global {
   interface Window {
@@ -14,15 +15,26 @@ window.render_game_to_text = () => window.__territoryrush_snapshot || '{}';
 
 export function useGameLoop() {
   const store = useGameStore();
-  let timer = 0;
+  let tickTimer = 0;
+  let secondTimer = 0;
+
   onMounted(() => {
-    timer = window.setInterval(() => {
+    tickTimer = window.setInterval(() => {
       if (store.state) store.state.tick++;
-    }, 120);
+    }, MAP_CONFIG.tickMs);
+
+    secondTimer = window.setInterval(() => {
+      store.tickTime();
+    }, 1000);
+
     window.advanceTime = (ms: number) => {
-      const steps = Math.max(1, Math.round(ms / 120));
+      const steps = Math.max(1, Math.round(ms / MAP_CONFIG.tickMs));
       for (let i = 0; i < steps; i++) if (store.state) store.state.tick++;
     };
   });
-  onUnmounted(() => clearInterval(timer));
+
+  onUnmounted(() => {
+    clearInterval(tickTimer);
+    clearInterval(secondTimer);
+  });
 }

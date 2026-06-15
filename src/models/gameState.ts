@@ -1,1 +1,1 @@
-import type { Cell } from './cell'; import type { Player } from './player'; export interface GameState { id:string; room_id:string; tick:number; map:Cell[][]; players:Player[]; leaderboards:{player_id:string;score:number}[]; start_time:string; end_time?:string }
+import type { Cell } from './cell'; import type { Player } from './player'; export interface GameState { id:string; room_id:string; tick:number; map:Cell[][]; players:Player[]; leaderboards:{player_id:string;score:number}[]; start_time:string; end_time?:string; is_ended:boolean; remaining_seconds:number }
